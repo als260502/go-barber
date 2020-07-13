@@ -1,0 +1,21 @@
+################################
+##Create a file ormconfig.json##
+################################
+
+{
+  "type": "",
+  "host": "",
+  "port": "",
+  "username": "",
+  "password": "",
+  "database": "",
+  "entities": [
+    "path to entities extension"
+  ],
+  "migrations": [
+    "path to migrations extension
+  ],
+  "cli": {
+    "migrationsDir": "path to migrations folder"
+  }
+}
