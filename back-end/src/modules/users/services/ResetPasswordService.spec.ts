@@ -1,6 +1,5 @@
 import 'reflect-metadata';
 import AppError from '@shared/errors/AppError';
-import FakeMailProvider from '@shared/container/providers/MailProvider/fakes/FakeMailProvider';
 import FakeUsersRepository from '../repositories/fake/FakeUsersRepository';
 import FakeUserTokensRepository from '../repositories/fake/FakeuserTokensRepository';
 import ResetPasswordService from './ResetPasswordService';
@@ -8,7 +7,6 @@ import FakeHashProvider from '../providers/HashProvider/fake/FakeHashProvider';
 
 let fakeUsersRepository: FakeUsersRepository;
 let fakeUserTokensRepository: FakeUserTokensRepository;
-let fakeMailProvider: FakeMailProvider;
 let resetPassword: ResetPasswordService;
 let fakeHashProvider: FakeHashProvider;
 
