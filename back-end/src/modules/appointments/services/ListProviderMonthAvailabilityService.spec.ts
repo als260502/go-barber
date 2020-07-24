@@ -1,9 +1,8 @@
-import 'reflect-metadata';
-import ListProviderMonthAvailabilityService from './ListProviderMonthAvailabilityService';
 import FakeAppointmentsRepository from '../repositories/fake/FakeAppointmentsRepository';
+import ListProviderMonthAvailabilityService from './ListProviderMonthAvailabilityService';
 
-let listProviderMonthAvailability: ListProviderMonthAvailabilityService;
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
+let listProviderMonthAvailability: ListProviderMonthAvailabilityService;
 
 describe('ListProviderMonthAvailability', () => {
   beforeEach(() => {
@@ -12,20 +11,20 @@ describe('ListProviderMonthAvailability', () => {
       fakeAppointmentsRepository,
     );
   });
-
   it('should be able to list the month availability from provider', async () => {
+    // eslint-disable-next-line no-plusplus
+    for (let index = 0; index < 10; index++) {
+      Promise.all([
+        fakeAppointmentsRepository.create({
+          provider_id: 'user',
+          user_id: 'user',
+          date: new Date(2020, 4, 20, 8 + index, 0, 0),
+        }),
+      ]);
+    }
     await fakeAppointmentsRepository.create({
       provider_id: 'user',
-      date: new Date(2020, 4, 20, 8, 0, 0),
-    });
-
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
-      date: new Date(2020, 4, 20, 10, 0, 0),
-    });
-
-    await fakeAppointmentsRepository.create({
-      provider_id: 'user',
+      user_id: 'user',
       date: new Date(2020, 4, 21, 8, 0, 0),
     });
 
@@ -39,7 +38,7 @@ describe('ListProviderMonthAvailability', () => {
       expect.arrayContaining([
         { day: 19, available: true },
         { day: 20, available: false },
-        { day: 21, available: false },
+        { day: 21, available: true },
         { day: 22, available: true },
       ]),
     );
