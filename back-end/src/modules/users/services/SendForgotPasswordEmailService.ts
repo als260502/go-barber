@@ -37,6 +37,8 @@ export default class SendForgotPasswordEmailService {
       'forgot_password.hbs',
     );
 
+    const url = process.env.APP_WEB_URL;
+
     await this.mailProvider.sendMail({
       to: { name: user.name, email: user.email },
       subject: '[GoBarber] Recuperação de senha',
@@ -44,7 +46,7 @@ export default class SendForgotPasswordEmailService {
         file: forgotPasswordTemplate,
         variables: {
           name: user.name,
-          link: `http://localhost:3000/reset_password?token=${token}`,
+          link: `${url}/reset_password?token=${token}`,
         },
       },
     });
