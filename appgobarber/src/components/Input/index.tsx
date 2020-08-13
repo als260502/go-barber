@@ -14,6 +14,7 @@ import { Container, TextInput, Icon } from './styles';
 interface InputProps extends TextInputProps {
   name: string;
   icon: string;
+  containerStyle?: {};
 }
 
 interface InputValueReferente {
@@ -25,14 +26,14 @@ interface InputRef {
 }
 
 const Input: React.RefForwardingComponent<InputRef, InputProps> = (
-  { name, icon, ...rest },
+  { name, icon, containerStyle = {}, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>('null');
   const { registerField, defaultValue = '', fieldName, error } = useField(name);
   const inputValueRef = useRef<InputValueReferente>({ string: defaultValue });
 
-  const [isFucused, setIsFocused] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
 
   const handleInputFocus = useCallback(() => {
@@ -67,11 +68,11 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <Container isFucused={isFucused} isErrored={!!error}>
+    <Container style={containerStyle} isFocused={isFocused} isErrored={!!error}>
       <Icon
         name={icon}
         size={20}
-        color={isFucused || isFilled ? '#ff9000' : '#666360'}
+        color={isFocused || isFilled ? '#ff9000' : '#666360'}
       />
       <TextInput
         ref={inputElementRef}
