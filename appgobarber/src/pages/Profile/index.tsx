@@ -1,5 +1,8 @@
 import React, { useRef, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
+import ImagePicker from 'react-native-image-picker';
+import ImageEditor from '@react-native-community/image-editor';
+
 import {
   ScrollView,
   KeyboardAvoidingView,
@@ -7,6 +10,7 @@ import {
   View,
   TextInput,
   Alert,
+  ImageCropData,
 } from 'react-native';
 
 import { Form } from '@unform/mobile';
@@ -60,18 +64,16 @@ const Profile: React.FC = () => {
           old_password: Yup.string(),
           password: Yup.string().when('old_password', {
             is: val => !!val.length,
-            then: Yup.string()
-              .required('Campo obrigatório')
-              .min(6, 'minimo 6 dígitos'),
+            then: Yup.string().required(),
             otherwise: Yup.string(),
           }),
           password_confirmation: Yup.string()
             .when('old_password', {
               is: val => !!val.length,
-              then: Yup.string().required('Campo obrigatório'),
+              then: Yup.string().required(),
               otherwise: Yup.string(),
             })
-            .oneOf([Yup.ref('password'), undefined], 'Confirmação incorreta'),
+            .oneOf([Yup.ref('password')], 'Confirmação incorreta'),
         });
 
         await schema.validate(data, {
@@ -98,9 +100,9 @@ const Profile: React.FC = () => {
         };
 
         const response = await api.put('/profile', formData);
-        updateUser(response.data);
+        await updateUser(response.data);
 
-        Alert.alert('Perfil atualizado com sucesso!', '');
+        Alert.alert('Perfil atualizado com sucesso!');
 
         navigation.goBack();
       } catch (err) {
@@ -122,6 +124,57 @@ const Profile: React.FC = () => {
     navigation.goBack();
   }, [navigation]);
 
+  const handleUpdateAvatar = useCallback(() => {
+    ImagePicker.showImagePicker(
+      {
+        title: 'Selecione um avatar',
+        cancelButtonTitle: 'Cancelar',
+        takePhotoButtonTitle: 'Usar câmera',
+        chooseFromLibraryButtonTitle: 'Foto da galeria',
+      },
+      async response => {
+        if (response.didCancel) {
+          return;
+        }
+
+        if (response.error) {
+          Alert.alert('Erro ao atualizar seu avatar');
+          return;
+        }
+
+        const data = new FormData();
+
+        console.log(response.width, response.height);
+
+        const cropData: ImageCropData = {
+          size: {
+            width: response.width,
+            height: response.height,
+          },
+          offset: {
+            x: 0,
+            y: 0,
+          },
+          displaySize: {
+            width: 300,
+            height: 300,
+          },
+        };
+        const cropedImage = await ImageEditor.cropImage(response.uri, cropData);
+
+        data.append('avatar', {
+          type: 'image/jpeg',
+          name: `${user.id}.jpg`,
+          uri: cropedImage,
+        });
+
+        await api
+          .patch('users/avatar', data)
+          .then(apiResponse => updateUser(apiResponse.data));
+      },
+    );
+  }, [updateUser, user.id]);
+
   return (
     <>
       <KeyboardAvoidingView
@@ -138,7 +191,7 @@ const Profile: React.FC = () => {
               <BackButton onPress={handleGoBack}>
                 <Icon name="chevron-left" size={24} color="#999591" />
               </BackButton>
-              <UserAvatarButton onPress={() => { }}>
+              <UserAvatarButton onPress={handleUpdateAvatar}>
                 <UserAvatar source={{ uri: user.avatar_url }} />
               </UserAvatarButton>
               <View>

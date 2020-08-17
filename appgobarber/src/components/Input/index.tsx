@@ -31,7 +31,7 @@ const Input: React.RefForwardingComponent<InputRef, InputProps> = (
 ) => {
   const inputElementRef = useRef<any>('null');
   const { registerField, defaultValue = '', fieldName, error } = useField(name);
-  const inputValueRef = useRef<InputValueReferente>({ string: defaultValue });
+  const inputValueRef = useRef<InputValueReferente>({ value: defaultValue });
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
